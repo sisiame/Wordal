@@ -1,6 +1,5 @@
 package com.sisiame.wordal
 
-import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Spannable
@@ -73,19 +72,19 @@ class MainActivity : AppCompatActivity() {
         // resets number of guesses
         numGuesses = 0
 
+        // hides the restart button
+        restartButton.visibility = View.GONE
+
+        // resets the game status text
+        winLoseText.text = ""
+
         // resets outputs
         for(output in outputs) {
-            output.text = ""
+            output.text = getString(R.string.output_placeholder)
         }
 
         // selects a new word
         wordToGuess = FourLetterWordList.getRandomFourLetterWord()
-
-        // hides the restart button
-        restartButton.visibility = View.GONE
-
-        // resets the displayed game text
-        winLoseText.text = ""
     }
 
     /**
@@ -99,10 +98,10 @@ class MainActivity : AppCompatActivity() {
 
             // puts together the output string using each letter input
             for(letter in inputs) {
-                letter.clearFocus()
-                letter.text.clear()
                 val input = letter.text.toString()
                 outputString = "$outputString$input"
+                letter.clearFocus()
+                letter.text.clear()
             }
 
             outputs[numGuesses].text = outputString
@@ -115,6 +114,12 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    /**
+     * Checks if inputs are valid.
+     * Inputs are valid if they contain only letters.
+     *
+     * @return whether the inputs are valid or not
+     */
     private fun validateGuessInput(): Boolean {
 
         // loops through each letter inputted
@@ -160,12 +165,15 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    /**
+     * Checks if the player won the game.
+     *
+     * @param guess the player's inputted word
+     */
     private fun checkWin(guess: String) {
 
-        if(guess.equals(wordToGuess, true)) {
+        if(guess == wordToGuess) {
             winGame()
-            setLetterColors(guess, true)
-            return
         } else if(numGuesses >= 3) {
             loseGame()
         }
@@ -174,25 +182,34 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    /**
+     * Displays a victory message and ends the game.
+     */
     private fun winGame() {
         winLoseText.setTextColor(getColor(R.color.green))
         winLoseText.text = resources.getStringArray(R.array.win)[numGuesses - 1]
         restartButton.visibility = View.VISIBLE
     }
 
+    /**
+     * Displays a failure message and ends the game.
+     */
     private fun loseGame() {
         winLoseText.setTextColor(getColor(R.color.red))
+
+        // shows what the correct word was meant to be
         winLoseText.text = String.format(getString(R.string.lose), wordToGuess)
         restartButton.visibility = View.VISIBLE
     }
 
-    private fun setLetterColors(guess: String, win: Boolean = false) {
-
-        // makes the output text green if the guessed word is correct
-        if(win) {
-            outputs[numGuesses - 1].setTextColor(getColor(R.color.green))
-            return
-        }
+    /**
+     * Sets the colors of the outputs' letters based on correctness.
+     * Green represents a correctly placed letter.
+     * Red represents an incorrectly placed letter.
+     *
+     * @param guess the player's inputted word
+     */
+    private fun setLetterColors(guess: String) {
 
         // creates a SpannableString with the guessed word to color each individual letter
         val outputSpannable = SpannableString(guess)
@@ -232,9 +249,11 @@ class MainActivity : AppCompatActivity() {
     object FourLetterWordList {
 
         // List of most common 4 letter words from: https://7esl.com/4-letter-words/
-        const val fourLetterWords = "Ball,Back,Slob"
-            //"Area,Army,Baby,Back,Ball,Band,Bank,Base,Bill,Body,Book,Call,Card,Care,Case,Cash,City,Club,Cost,Date,Deal,Door,Duty,East,Edge,Face,Fact,Farm,Fear,File,Film,Fire,Firm,Fish,Food,Foot,Form,Fund,Game,Girl,Goal,Gold,Hair,Half,Hall,Hand,Head,Help,Hill,Home,Hope,Hour,Idea,Jack,John,Kind,King,Lack,Lady,Land,Life,Line,List,Look,Lord,Loss,Love,Mark,Mary,Mind,Miss,Move,Name,Need,News,Note,Page,Pain,Pair,Park,Part,Past,Path,Paul,Plan,Play,Post,Race,Rain,Rate,Rest,Rise,Risk,Road,Rock,Role,Room,Rule,Sale,Seat,Shop,Show,Side,Sign,Site,Size,Skin,Sort,Star,Step,Task,Team,Term,Test,Text,Time,Tour,Town,Tree,Turn,Type,Unit,User,View,Wall,Week,West,Wife,Will,Wind,Wine,Wood,Word,Work,Year,Bear,Beat,Blow,Burn,Call,Care,Cast,Come,Cook,Cope,Cost,Dare,Deal,Deny,Draw,Drop,Earn,Face,Fail,Fall,Fear,Feel,Fill,Find,Form,Gain,Give,Grow,Hang,Hate,Have,Head,Hear,Help,Hide,Hold,Hope,Hurt,Join,Jump,Keep,Kill,Know,Land,Last,Lead,Lend,Lift,Like,Link,Live,Look,Lose,Love,Make,Mark,Meet,Mind,Miss,Move,Must,Name,Need,Note,Open,Pass,Pick,Plan,Play,Pray,Pull,Push,Read,Rely,Rest,Ride,Ring,Rise,Risk,Roll,Rule,Save,Seek,Seem,Sell,Send,Shed,Show,Shut,Sign,Sing,Slip,Sort,Stay,Step,Stop,Suit,Take,Talk,Tell,Tend,Test,Turn,Vary,View,Vote,Wait,Wake,Walk,Want,Warn,Wash,Wear,Will,Wish,Work,Able,Back,Bare,Bass,Blue,Bold,Busy,Calm,Cold,Cool,Damp,Dark,Dead,Deaf,Dear,Deep,Dual,Dull,Dumb,Easy,Evil,Fair,Fast,Fine,Firm,Flat,Fond,Foul,Free,Full,Glad,Good,Grey,Grim,Half,Hard,Head,High,Holy,Huge,Just,Keen,Kind,Last,Late,Lazy,Like,Live,Lone,Long,Loud,Main,Male,Mass,Mean,Mere,Mild,Nazi,Near,Neat,Next,Nice,Okay,Only,Open,Oral,Pale,Past,Pink,Poor,Pure,Rare,Real,Rear,Rich,Rude,Safe,Same,Sick,Slim,Slow,Soft,Sole,Sore,Sure,Tall,Then,Thin,Tidy,Tiny,Tory,Ugly,Vain,Vast,Very,Vice,Warm,Wary,Weak,Wide,Wild,Wise,Zero,Ably,Afar,Anew,Away,Back,Dead,Deep,Down,Duly,Easy,Else,Even,Ever,Fair,Fast,Flat,Full,Good,Half,Hard,Here,High,Home,Idly,Just,Late,Like,Live,Long,Loud,Much,Near,Nice,Okay,Once,Only,Over,Part,Past,Real,Slow,Solo,Soon,Sure,That,Then,This,Thus,Very,When,Wide"
+        private const val fourLetterWords = "Area,Army,Baby,Back,Ball,Band,Bank,Base,Bill,Body,Book,Call,Card,Care,Case,Cash,City,Club,Cost,Date,Deal,Door,Duty,East,Edge,Face,Fact,Farm,Fear,File,Film,Fire,Firm,Fish,Food,Foot,Form,Fund,Game,Girl,Goal,Gold,Hair,Half,Hall,Hand,Head,Help,Hill,Home,Hope,Hour,Idea,Jack,John,Kind,King,Lack,Lady,Land,Life,Line,List,Look,Lord,Loss,Love,Mark,Mary,Mind,Miss,Move,Name,Need,News,Note,Page,Pain,Pair,Park,Part,Past,Path,Paul,Plan,Play,Post,Race,Rain,Rate,Rest,Rise,Risk,Road,Rock,Role,Room,Rule,Sale,Seat,Shop,Show,Side,Sign,Site,Size,Skin,Sort,Star,Step,Task,Team,Term,Test,Text,Time,Tour,Town,Tree,Turn,Type,Unit,User,View,Wall,Week,West,Wife,Will,Wind,Wine,Wood,Word,Work,Year,Bear,Beat,Blow,Burn,Call,Care,Cast,Come,Cook,Cope,Cost,Dare,Deal,Deny,Draw,Drop,Earn,Face,Fail,Fall,Fear,Feel,Fill,Find,Form,Gain,Give,Grow,Hang,Hate,Have,Head,Hear,Help,Hide,Hold,Hope,Hurt,Join,Jump,Keep,Kill,Know,Land,Last,Lead,Lend,Lift,Like,Link,Live,Look,Lose,Love,Make,Mark,Meet,Mind,Miss,Move,Must,Name,Need,Note,Open,Pass,Pick,Plan,Play,Pray,Pull,Push,Read,Rely,Rest,Ride,Ring,Rise,Risk,Roll,Rule,Save,Seek,Seem,Sell,Send,Shed,Show,Shut,Sign,Sing,Slip,Sort,Stay,Step,Stop,Suit,Take,Talk,Tell,Tend,Test,Turn,Vary,View,Vote,Wait,Wake,Walk,Want,Warn,Wash,Wear,Will,Wish,Work,Able,Back,Bare,Bass,Blue,Bold,Busy,Calm,Cold,Cool,Damp,Dark,Dead,Deaf,Dear,Deep,Dual,Dull,Dumb,Easy,Evil,Fair,Fast,Fine,Firm,Flat,Fond,Foul,Free,Full,Glad,Good,Grey,Grim,Half,Hard,Head,High,Holy,Huge,Just,Keen,Kind,Last,Late,Lazy,Like,Live,Lone,Long,Loud,Main,Male,Mass,Mean,Mere,Mild,Nazi,Near,Neat,Next,Nice,Okay,Only,Open,Oral,Pale,Past,Pink,Poor,Pure,Rare,Real,Rear,Rich,Rude,Safe,Same,Sick,Slim,Slow,Soft,Sole,Sore,Sure,Tall,Then,Thin,Tidy,Tiny,Tory,Ugly,Vain,Vast,Very,Vice,Warm,Wary,Weak,Wide,Wild,Wise,Zero,Ably,Afar,Anew,Away,Back,Dead,Deep,Down,Duly,Easy,Else,Even,Ever,Fair,Fast,Flat,Full,Good,Half,Hard,Here,High,Home,Idly,Just,Late,Like,Live,Long,Loud,Much,Near,Nice,Okay,Once,Only,Over,Part,Past,Real,Slow,Solo,Soon,Sure,That,Then,This,Thus,Very,When,Wide"
 
+        /**
+         * Returns all the 4 letter words as a list.
+         */
         private fun getAllFourLetterWords(): List<String> {
             return fourLetterWords.split(",")
         }

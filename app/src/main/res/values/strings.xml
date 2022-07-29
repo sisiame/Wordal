@@ -7,4 +7,7 @@
         <item>Whew, close call!</item>
     </string-array>
     <string name="lose">Oh no! The correct word was %s Try again?</string>
+    <string name="output_placeholder">____</string>
+    <string name="submit_button">submit button</string>
+    <string name="restart_button">restart button</string>
 </resources>
