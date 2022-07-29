@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Wordal</string>
+    <string name="letter_placeholder">-</string>
+    <string-array name="win">
+        <item>Wow, incredible!</item>
+        <item>You got it, nice job!</item>
+        <item>Whew, close call!</item>
+    </string-array>
+    <string name="lose">Oh no! The correct word was %s Try again?</string>
+</resources>
