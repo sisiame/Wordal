@@ -17,11 +17,6 @@ import android.view.View
  */
 class MainActivity : AppCompatActivity() {
 
-    companion object {
-        private const val BLANK_LETTER: Int = 0
-        private const val INVALID_CHARACTER: Int = 1
-    }
-
     // each individual letter is a separate input, with every EditText stored in the inputs array
     private lateinit var inputs: Array<EditText>
 
@@ -34,7 +29,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var wordToGuess: String
 
     private lateinit var submitButton: ImageButton
-    private lateinit var restartButton: ImageButton
 
     // the number of guesses the player has used so far
     private var numGuesses: Int = 0
@@ -54,11 +48,9 @@ class MainActivity : AppCompatActivity() {
         // finds views and assigns them to fields
         winLoseText = findViewById(R.id.winLoseText)
         submitButton = findViewById(R.id.submit)
-        restartButton = findViewById(R.id.restart)
 
         // sets click listeners for buttons
         submitButton.setOnClickListener { submitGuess() }
-        restartButton.setOnClickListener { startGame() }
 
         // initializes the game
         startGame()
@@ -71,9 +63,6 @@ class MainActivity : AppCompatActivity() {
 
         // resets number of guesses
         numGuesses = 0
-
-        // hides the restart button
-        restartButton.visibility = View.GONE
 
         // resets the game status text
         winLoseText.text = ""
@@ -92,76 +81,22 @@ class MainActivity : AppCompatActivity() {
      */
     private fun submitGuess() {
 
-        if(validateGuessInput()) {
+        var outputString = ""
 
-            var outputString = ""
-
-            // puts together the output string using each letter input
-            for(letter in inputs) {
-                val input = letter.text.toString()
-                outputString = "$outputString$input"
-                letter.clearFocus()
-                letter.text.clear()
-            }
-
-            outputs[numGuesses].text = outputString
-
-            // increases number of guesses each time the player submits a valid guess
-            numGuesses++
-
-            checkWin(outputString)
+        // puts together the output string using each letter input
+        for(letter in inputs) {
+            val input = letter.text.toString()
+            outputString = "$outputString$input"
+            letter.clearFocus()
+            letter.text.clear()
         }
 
-    }
+        outputs[numGuesses].text = outputString
 
-    /**
-     * Checks if inputs are valid.
-     * Inputs are valid if they contain only letters.
-     *
-     * @return whether the inputs are valid or not
-     */
-    private fun validateGuessInput(): Boolean {
+        // increases number of guesses each time the player submits a valid guess
+        numGuesses++
 
-        // loops through each letter inputted
-        for(letterInput in inputs) {
-
-            // convert Editable to String for use with String functions
-            val letter = letterInput.text.toString()
-
-            // checks if any inputs are blank or empty
-            if(letter.isBlank()) {
-                showErrorMessage(BLANK_LETTER)
-                return false
-            }
-
-            // checks if any inputs are not letters
-            if((letter !in "A".."Z" && letter !in "a".."z")) {
-                showErrorMessage(INVALID_CHARACTER)
-                return false
-            }
-
-        }
-
-        return true
-
-    }
-
-    /**
-     * Displays an error message as a toast.
-     * Intended for use with input validator.
-     *
-     * @param errorCode the number code associated with the error
-     *
-     */
-    private fun showErrorMessage(errorCode: Int) {
-
-        if(errorCode == BLANK_LETTER) {
-            // shows message if one of the inputs are blank
-            Toast.makeText(this, "You're missing letters!", Toast.LENGTH_SHORT).show()
-        } else if(errorCode == INVALID_CHARACTER) {
-            // shows message if one of the inputs is not a letter
-            Toast.makeText(this, "You can only enter letters!", Toast.LENGTH_SHORT).show()
-        }
+        checkWin(outputString)
 
     }
 
@@ -186,20 +121,15 @@ class MainActivity : AppCompatActivity() {
      * Displays a victory message and ends the game.
      */
     private fun winGame() {
-        winLoseText.setTextColor(getColor(R.color.green))
-        winLoseText.text = resources.getStringArray(R.array.win)[numGuesses - 1]
-        restartButton.visibility = View.VISIBLE
+        submitButton.visibility = View.GONE
     }
 
     /**
      * Displays a failure message and ends the game.
      */
     private fun loseGame() {
-        winLoseText.setTextColor(getColor(R.color.red))
-
-        // shows what the correct word was meant to be
         winLoseText.text = String.format(getString(R.string.lose), wordToGuess)
-        restartButton.visibility = View.VISIBLE
+        submitButton.visibility = View.GONE
     }
 
     /**
